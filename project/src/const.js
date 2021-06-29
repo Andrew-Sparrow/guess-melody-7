@@ -13,3 +13,15 @@ export const AppRoute = {
   ROOT: '/',
   GAME: '/game',
 };
+
+export const AuthorizationStatus = {
+  AUTH: 'AUTH',
+  NO_AUTH: 'NO_AUTH',
+  UNKNOWN: 'UNKNOWN',
+};
+
+export const APIRoute = {
+  QUESTIONS: '/questions',
+  LOGIN: '/login',
+  LOGOUT: '/logout',
+};

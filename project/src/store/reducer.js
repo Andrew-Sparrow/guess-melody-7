@@ -1,11 +1,12 @@
 import {ActionType} from './action';
-import questions from '../mocks/questions';
-import {FIRST_GAME_STEP, MAX_MISTAKE_COUNT} from '../const';
+import {FIRST_GAME_STEP, AuthorizationStatus} from '../const';
 
 const initialState = {
   mistakes: 0,
   step: FIRST_GAME_STEP,
-  questions,
+  questions: [],
+  authorizationStatus: AuthorizationStatus.UNKNOWN,
+  isDataLoaded: false,
 };
 
 const reducer = (state = initialState, action) => {
@@ -18,23 +19,32 @@ const reducer = (state = initialState, action) => {
         step: nextStep,
       };
     }
-    case ActionType.INCREMENT_MISTAKES: {
-      const mistakes = state.mistakes + action.payload;
-
-      if (mistakes >= MAX_MISTAKE_COUNT) {
-        return {
-          ...initialState,
-        };
-      }
-
+    case ActionType.INCREMENT_MISTAKES:
       return {
         ...state,
         mistakes: state.mistakes + action.payload,
       };
-    }
     case ActionType.RESET_GAME:
       return {
-        ...initialState,
+        ...state,
+        mistakes: 0,
+        step: FIRST_GAME_STEP,
+      };
+    case ActionType.LOAD_QUESTIONS:
+      return {
+        ...state,
+        questions: action.payload,
+        isDataLoaded: true,
+      };
+    case ActionType.REQUIRED_AUTHORIZATION:
+      return {
+        ...state,
+        authorizationStatus: action.payload,
+      };
+    case ActionType.LOGOUT:
+      return {
+        ...state,
+        authorizationStatus: AuthorizationStatus.NO_AUTH,
       };
     default:
       return state;
