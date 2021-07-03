@@ -1,3 +1,4 @@
+import {createAction} from '@reduxjs/toolkit';
 import {isArtistAnswerCorrect, isGenreAnswerCorrect} from '../game';
 import {GameType} from '../const';
 
@@ -11,46 +12,42 @@ export const ActionType = {
   REDIRECT_TO_ROUTE: 'game/redirectToRoute',
 };
 
-export const ActionCreator = {
-  incrementStep: () => ({
-    type: ActionType.INCREMENT_STEP,
-    payload: 1,
-  }),
-  resetGame: () => ({
-    type: ActionType.RESET_GAME,
-  }),
-  incrementMistake: (question, userAnswer) => {
-    let answerIsCorrect;
+export const incrementStep = createAction(ActionType.INCREMENT_STEP, () => ({
+  payload: 1,
+}));
 
-    switch (question.type) {
-      case GameType.ARTIST:
-        answerIsCorrect = isArtistAnswerCorrect(question, userAnswer);
-        break;
-      case GameType.GENRE:
-        answerIsCorrect = isGenreAnswerCorrect(question, userAnswer);
-        break;
-      default:
-        answerIsCorrect = false;
-    }
+export const resetGame = createAction(ActionType.RESET_GAME);
 
-    return {
-      type: ActionType.INCREMENT_MISTAKES,
-      payload: answerIsCorrect ? 0 : 1,
-    };
-  },
-  loadQuestions: (questions) => ({
-    type: ActionType.LOAD_QUESTIONS,
-    payload: questions,
-  }),
-  requireAuthorization: (status) => ({
-    type: ActionType.REQUIRED_AUTHORIZATION,
-    payload: status,
-  }),
-  logout: () => ({
-    type: ActionType.LOGOUT,
-  }),
-  redirectToRoute: (url) => ({
-    type: ActionType.REDIRECT_TO_ROUTE,
-    payload: url,
-  }),
-};
+export const incrementMistake = createAction(ActionType.INCREMENT_MISTAKES, (question, userAnswer) => {
+  let answerIsCorrect;
+
+  switch (question.type) {
+    case GameType.ARTIST:
+      answerIsCorrect = isArtistAnswerCorrect(question, userAnswer);
+      break;
+    case GameType.GENRE:
+      answerIsCorrect = isGenreAnswerCorrect(question, userAnswer);
+      break;
+    default:
+      answerIsCorrect = false;
+  }
+
+  return {
+    type: ActionType.INCREMENT_MISTAKES,
+    payload: answerIsCorrect ? 0 : 1,
+  };
+});
+
+export const loadQuestions = createAction(ActionType.LOAD_QUESTIONS, (questions) => ({
+  payload: questions,
+}));
+
+export const requireAuthorization = createAction(ActionType.REQUIRED_AUTHORIZATION, (status) => ({
+  payload: status,
+}));
+
+export const logout = createAction(ActionType.LOGOUT);
+
+export const redirectToRoute = createAction(ActionType.REDIRECT_TO_ROUTE, (url) => ({
+  payload: url,
+}));

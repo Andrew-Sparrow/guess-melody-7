@@ -1,13 +1,17 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import {ActionCreator} from '../../store/action';
+import {useSelector, useDispatch} from 'react-redux';
 import {logout} from '../../store/api-actions';
+import {resetGame} from '../../store/action';
+import {getStep, getMistakeCount} from '../../store/game-process/selectors';
 
 function WinScreen(props) {
-  const {questionsCount, mistakesCount, onReplayButtonClick, resetGame, logoutGame} = props;
-  const correctlyQuestionsCount = questionsCount - mistakesCount;
+  const {onReplayButtonClick} = props;
+  const step = useSelector(getStep);
+  const mistakes = useSelector(getMistakeCount);
+  const dispatch = useDispatch();
+  const correctlyQuestionsCount = step - mistakes;
 
   return (
     <section className="result">
@@ -17,7 +21,7 @@ function WinScreen(props) {
           onClick={(evt) => {
             evt.preventDefault();
 
-            logoutGame();
+            dispatch(logout());
           }}
           to='/'
         >
@@ -28,10 +32,10 @@ function WinScreen(props) {
         <img src="img/melody-logo.png" alt="Угадай мелодию" width="186" height="83" />
       </div>
       <h2 className="result__title">Вы настоящий меломан!</h2>
-      <p className="result__total">Вы ответили правильно на {correctlyQuestionsCount} вопросов и совершили {mistakesCount} ошибки</p>
+      <p className="result__total">Вы ответили правильно на {correctlyQuestionsCount} вопросов и совершили {mistakes} ошибки</p>
       <button
         onClick={() => {
-          resetGame();
+          dispatch(resetGame());
           onReplayButtonClick();
         }}
         className="replay"
@@ -44,28 +48,7 @@ function WinScreen(props) {
 }
 
 WinScreen.propTypes = {
-  questionsCount: PropTypes.number.isRequired,
-  mistakesCount: PropTypes.number.isRequired,
   onReplayButtonClick: PropTypes.func.isRequired,
-  resetGame: PropTypes.func.isRequired,
-  logoutGame: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({step, mistakes}) => ({
-  questionsCount: step,
-  mistakesCount: mistakes,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  resetGame() {
-    dispatch(ActionCreator.resetGame());
-  },
-  logoutGame() {
-    dispatch(logout());
-  },
-});
-
-
-export {WinScreen};
-
-export default connect(mapStateToProps, mapDispatchToProps)(WinScreen);
+export default WinScreen;
